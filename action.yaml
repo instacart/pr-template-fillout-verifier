@@ -44,14 +44,13 @@ runs:
       uses: mshick/add-pr-comment@v2
       with:
         message: ${{ inputs.comment }}
+    - name: Check equality and convert to draft
+      shell: bash
+      if: inputs.convert-to-draft && steps.template.outputs.content == steps.clean.outputs.cleaned
+      run: gh pr ready ${{ github.event.pull_request.number }} --undo
     - name: Check equality and fail
       if: inputs.fail && steps.template.outputs.content == steps.clean.outputs.cleaned
       uses: actions/github-script@v3
       with:
         script: |
           core.setFailed('Your PR body appears to be the same as the PR template file, please fill out the PR.')
-    - name: clean pr content
-      shell: bash
-      id: Check Equality and convert to draft
-      if: inputs.convert-to-draft && steps.template.outputs.content == steps.clean.outputs.cleaned
-      run: gh pr ready ${{ github.event.pull_request.number }} --undo
