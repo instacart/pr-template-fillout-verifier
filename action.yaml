@@ -23,7 +23,7 @@ runs:
       uses: actions/checkout@v4
     - name: Read PR Template
       id: template
-      uses: juliangruber/read-file-action@v1
+      uses: juliangruber/read-file-action@b549046febe0fe86f8cb4f93c24e284433f9ab58
       with:
         path: ${{ inputs.template-path }}
     # This step is required because the PR body is CRLF, and the read file from the previous step is just LF
@@ -41,7 +41,7 @@ runs:
         } >> "$GITHUB_OUTPUT"
     - name: Check equality and comment
       if: inputs.comment && steps.template.outputs.content == steps.clean.outputs.cleaned
-      uses: mshick/add-pr-comment@v2
+      uses: mshick/add-pr-comment@b8f338c590a895d50bcbfa6c5859251edc8952fc
       with:
         message: ${{ inputs.comment }}
     - name: Check equality and convert to draft
