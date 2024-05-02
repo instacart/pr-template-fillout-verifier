@@ -47,6 +47,8 @@ runs:
     - name: Check equality and convert to draft
       shell: bash
       if: inputs.convert-to-draft && steps.template.outputs.content == steps.clean.outputs.cleaned
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: gh pr ready ${{ github.event.pull_request.number }} --undo
     - name: Check equality and fail
       if: inputs.fail && steps.template.outputs.content == steps.clean.outputs.cleaned
