@@ -1,5 +1,6 @@
 name: 'Verify PR Template is filled out'
 description: 'Verifies that the PR description is not identical to the PR template, impliying that it wasnt filled out'
+color: 'green'
 inputs:
   comment:
     description: 'A message to comment on the PR if the template wasnt filled out'
