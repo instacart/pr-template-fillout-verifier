@@ -1,32 +1,42 @@
-name: 'Verify PR Template is filled out'
-description: 'Verifies that the PR description is not identical to the PR template, impliying that it wasnt filled out'
-color: 'green'
+name: "Verify PR Template is filled out"
+description: "Verifies that the PR description is not identical to the PR template, impliying that it wasnt filled out"
+color: "green"
 inputs:
   comment:
-    description: 'A message to comment on the PR if the template wasnt filled out'
+    description: "A message to comment on the PR if the template wasnt filled out"
     required: false
   fail:
-    description: 'Whether to fail if the PR description matches the template'
+    description: "Whether to fail if the PR description matches the template"
     required: false
     default: "true"
   convert-to-draft:
-    description: 'Whether to convert the PR to a draft if the template wasnt filled out'
+    description: "Whether to convert the PR to a draft if the template wasnt filled out"
     required: false
     default: "false"
   template-path:
-    description: 'The path of the PR template file to compare to'
+    description: "The path of the PR template file to compare to"
     required: false
     default: "./docs/pull_request_template.md"
 runs:
   using: "composite"
   steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
     - name: Read PR Template
+      uses: actions/github-script@v8
       id: template
-      uses: juliangruber/read-file-action@b549046febe0fe86f8cb4f93c24e284433f9ab58
+      env:
+        TEMPLATE_PATH: "${{ inputs.template-path }}"
       with:
-        path: ${{ inputs.template-path }}
+        retries: 3
+        script: |
+          const { data } = await github.rest.repos.getContent({
+            mediaType: {
+              format: 'raw'
+            },
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            path: process.env.TEMPLATE_PATH
+          });
+          core.setOutput('content', data);
     # This step is required because the PR body is CRLF, and the read file from the previous step is just LF
     - name: clean pr content
       shell: bash
